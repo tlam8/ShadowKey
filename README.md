@@ -16,9 +16,6 @@ The text file and image will be put into a "KeyloggerData" folder onto the user'
 - Tony Lam
 - Amar Sohail
 
-## Setup
-
-
 ## .exe File
 * link .exe file
 
