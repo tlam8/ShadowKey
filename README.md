@@ -1,6 +1,6 @@
 # ShadowKey
 ## About
-A keylogger is a piece of software that cyyber-attackers use to document the different inputs a person types into their keyboard. It can also have other functions such as: screenshots, email logging, window/application logging, and timestamping.
+A keylogger is a piece of software that cyber-attackers use to document the different inputs a person types into their keyboard. It can also have other functions such as: screenshots, email logging, window/application logging, and timestamping.
 A keylogger can also be software based or physical like a flash drive. 
 <br>
 <br>
