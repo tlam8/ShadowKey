@@ -9,7 +9,7 @@ in-depth understanding of how a basic keylogger functions. You can also download
 properly.
 
 ### Keylogger Functions
-Our keylogger captures different keystrokes on the keyboard. It also states what application is the user is currently active on. Once the user terminates the program by pressing the escape key, the keylogger will take a screenshot of the desktop.
+Our keylogger captures different keystrokes on the keyboard. It also states what application is the user is currently active on. Each keystroke will also have a time-stamp. Once the user terminates the program by pressing the escape key, the keylogger will take a screenshot of the desktop. The screenshot will also display the date and time of when it was captured.
 The text file and image will be put into a "KeyloggerData" folder onto the user's desktop. 
 
 ## Team
