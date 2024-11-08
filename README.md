@@ -33,7 +33,7 @@ Click on the link provided below. This will take you to a Google Drive Folder wi
 While the application is running, no window or UI will appear to simulate a keylogging attack. However, the application will still be seen running in the task manager. The application will perform the functions listed above while it is active. To terminate the appliaction, press the escape key.
 
 ## Instructions to Create .exe FIle
-
+Click this [link](Documents/Directions) to view the direstions on how to convert the source code into an .exe file. <br> <br>
 After you follow the instructions, allow the application to run past your system's firewall. This is application is purely used for educational purposes; no data will be collected from your system.
 
 
