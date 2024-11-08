@@ -32,7 +32,8 @@ Click on the link provided below. This will take you to a Google Drive Folder wi
 ## Application Description
 While the application is running, no window or UI will appear to simulate a keylogging attack. However, the application will still be seen running in the task manager. The application will perform the functions listed above while it is active. To terminate the appliaction, press the escape key.
 
-## .exe File
-[ShadowKey Keylogger Application](https://drive.google.com/drive/folders/19kBUZ4iUPODHm0nHskIfn8GXFDHXyuhl?usp=drive_link)
+## Instructions to Create .exe FIle
+
+After you follow the instructions, allow the application to run past your system's firewall. This is application is purely used for educational purposes; no data will be collected from your system.
 
 
