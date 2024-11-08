@@ -23,7 +23,7 @@ properly.
 - Amar Sohail
 
 ## Application Description
-While the application is running, no window or UI will appear to simulate a keylogging attack. However, the application will still be seen running in the task manager. The application will perform the functions listed above while it is active. To terminate the appliaction, press the escape key.
+While the application is running, no window or UI will appear to simulate a keylogging attack. However, the application will still be seen running in the task manager. The application will perform the functions listed above while it is active. It will save all the keystrokes, PC information, audio files, and screenshot images will be saved on a newly created folder on your devices desktop. To terminate the appliaction, press the escape key.
 
 ## Installation Instructions
 Click this [link](Documents/Directions.pdf) to view the direstions on how to convert the source code into an .exe file. <br> <br>
