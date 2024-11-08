@@ -6,7 +6,7 @@ A keylogger can also be software based or physical like a flash drive.
 <br>
 <br>
 ### Project Description
-The purpose of our project is to create keylogging software that shows how a basic keylogger works. We will provide directions on how to convert the code into an executable file (below)[## Installation] and the source code of the keylogger, so you can go through the lines of code and get an
+The purpose of our project is to create keylogging software that shows how a basic keylogger works. We will provide [directions](https://github.com/tlam8/ShadowKey/blob/main/README.md#installation-instructions) on how to convert the code into an executable file below and the source code of the keylogger, so you can go through the lines of code and get an
 in-depth understanding of how a basic keylogger functions. You can also download the [source code](Code/Keylogger_Source_Code) and run the program in your preferred IDE. Note that the code is written in Python and there are various libraries and extensions that are required to run the code 
 properly.
 
