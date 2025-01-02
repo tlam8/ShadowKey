@@ -1,4 +1,4 @@
-# ShadowKey
+# ShadowKey - Eductional Keylogging Application
 ## About
 This Project s for educational purposes only. <br>
 ### Keylogger
